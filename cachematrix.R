@@ -1,15 +1,111 @@
-## Put comments here that give an overall description of what your
-## functions do
+## Caching the Inverse of a matrix
+##
+## makeCacheMatrix() and cacheSolve() are used to implement a caching mechanism
+## for the inverse of a matrix rather than computed it repeatedly
+##
+## Usage: 
+##     # Create an invertible matrix
+##     m1 = rbind(c(1, -1/4), c(-1/4, 1))
+##     # Create a new CacheMatrix object
+##     y <- makeCacheMatrix(m1)
+##     # Store the inverse of m1 in i1
+##     i1 <- cacheSolve(y)
+##     # Store the inverse of m1 in i2. As the inverse has already been calculated, 
+##     # the cached inverse is used
+##     i2 <- cacheSolve(y)
 
-## Write a short comment describing this function
+###################################################################################
+## makeCacheMatrix
+## Creates a CacheMatrix object allowing for the caching of the inverse of a matrix
+##
+## Usage example:
+##     # Create some invertible matrices
+##     m1 = rbind(c(1, -1/4), c(-1/4, 1))
+##     m2 = rbind(c(1, -1/2), c(-1/2, 1))
+##     # Create a new CacheMatrix object
+##     y <- makeCacheMatrix(m1)
+##     # Set a different matrix for the CacheMatrix object
+##     y$set(m2)
+##     # Get the matrix currently used in the CacheMatrix object
+##     m3 <- y$get()
+##     # Set the cached inverse of the matrix
+##     y$setinverse(solve(m3))
+##     # Get the cached inverse of the matrix
+##     y$getinverse()
+##
+## Note:
+##   y$setinverse() is called when appropriate when using the cacheSolve() function
+##   It is therefore recommended to use cacheSolve(y) directly to get the inverse
+##   (or cached inverse) of the matrix
+###################################################################################
 
 makeCacheMatrix <- function(x = matrix()) {
-
+    # m is used to store the cached inverse
+    m <- NULL
+    
+    # Sets a new matrix object, and resets the inverse to NULL
+    set <- function(y) {
+        x <<- y
+        m <<- NULL
+    }
+    
+    # Returns the matrix stored in the CacheMatrix object
+    get <- function() x
+    
+    # Sets the cached inverse of the matrix
+    setinverse <- function(inverse) m <<- inverse
+    
+    # returns the inverse of the matrix,
+    # or NULL if the inverse hasn't been computed yet
+    getinverse <- function() m
+    
+    # List of components of the CacheMatrix object
+    # These functions are used to get/set the matrix and its inverse
+    list(set = set, get = get,
+         setinverse = setinverse,
+         getinverse = getinverse)
 }
 
-
-## Write a short comment describing this function
+###################################################################################
+## cacheSolve
+## Returns the inverse of the matrix stored in a CacheMatrix object
+##  - If the inverse has already been calculated, the cached value is returned
+##  - If the inverse hasn't been calculated yet, it is calculated and cached in the CacheMatrix object
+##  - cacheSolve takes the same arguments as solve()
+##
+## Usage example:
+##     # Create an invertible matrix
+##     m1 = rbind(c(1, -1/4), c(-1/4, 1))
+##     # Create a new CacheMatrix object
+##     y <- makeCacheMatrix(m1)
+##     # Store the inverse of m1 in i1
+##     i1 <- cacheSolve(y)
+##     # Store the inverse of m1 in i2. As the inverse has already been calculated, 
+##     # the cached inverse is used
+###################################################################################
 
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+    # Gets the inverse of the matrix if it has already been calculated
+    # NULL if the inverse hasn't been calculated yet
+    m <- x$getinverse()
+    
+    # If the inverse has already been calculated, returns it
+    if(!is.null(m)) {
+        # Display a message to inform the user that the cached inverse has been used
+        message("getting cached data")
+        return(m)
+    }
+    
+    # gets the actual matrix to invert
+    data <- x$get()
+    
+    # uses "solve" to invert the matrix
+    m <- solve(data, ...)
+    
+    # stores the calculated inverse in the CacheMatrix object
+    # to speed up subsequent calls
+    x$setinverse(m)
+    
+    # returns the calculated inverse
+    m
 }
