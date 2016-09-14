@@ -1,7 +1,7 @@
 ## Caching the Inverse of a matrix
 ##
 ## makeCacheMatrix() and cacheSolve() are used to implement a caching mechanism
-## for the inverse of a matrix rather than computed it repeatedly
+## for the inverse of a matrix rather than computing it repeatedly
 ##
 ## Usage: 
 ##     # Create an invertible matrix
@@ -17,26 +17,6 @@
 ###################################################################################
 ## makeCacheMatrix
 ## Creates a CacheMatrix object allowing for the caching of the inverse of a matrix
-##
-## Usage example:
-##     # Create some invertible matrices
-##     m1 = rbind(c(1, -1/4), c(-1/4, 1))
-##     m2 = rbind(c(1, -1/2), c(-1/2, 1))
-##     # Create a new CacheMatrix object
-##     y <- makeCacheMatrix(m1)
-##     # Set a different matrix for the CacheMatrix object
-##     y$set(m2)
-##     # Get the matrix currently used in the CacheMatrix object
-##     m3 <- y$get()
-##     # Set the cached inverse of the matrix
-##     y$setinverse(solve(m3))
-##     # Get the cached inverse of the matrix
-##     y$getinverse()
-##
-## Note:
-##   y$setinverse() is called when appropriate when using the cacheSolve() function
-##   It is therefore recommended to use cacheSolve(y) directly to get the inverse
-##   (or cached inverse) of the matrix
 ###################################################################################
 
 makeCacheMatrix <- function(x = matrix()) {
@@ -72,16 +52,6 @@ makeCacheMatrix <- function(x = matrix()) {
 ##  - If the inverse has already been calculated, the cached value is returned
 ##  - If the inverse hasn't been calculated yet, it is calculated and cached in the CacheMatrix object
 ##  - cacheSolve takes the same arguments as solve()
-##
-## Usage example:
-##     # Create an invertible matrix
-##     m1 = rbind(c(1, -1/4), c(-1/4, 1))
-##     # Create a new CacheMatrix object
-##     y <- makeCacheMatrix(m1)
-##     # Store the inverse of m1 in i1
-##     i1 <- cacheSolve(y)
-##     # Store the inverse of m1 in i2. As the inverse has already been calculated, 
-##     # the cached inverse is used
 ###################################################################################
 
 cacheSolve <- function(x, ...) {
